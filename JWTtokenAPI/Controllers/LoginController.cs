@@ -10,7 +10,6 @@ using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using JWTtokenAPI.DAL;
 
 namespace JWTtokenAPI.Controllers
 {
@@ -34,15 +33,18 @@ namespace JWTtokenAPI.Controllers
             
            
             var user = Authenticate(userLogin);
+            
             if (user != null)
             {
                 var token = GenerateToken(user);
+               
                 Dictionary<string, dynamic> response = new Dictionary<string, dynamic>();
                 if (token != null)
                 {
                     response.Add("status", true);
                     response.Add("message", "Token Genrated");
-                    response.Add("token", token);
+                    response.Add("token",  token );
+                    response.Add("currentUser", user);
                     return Ok(response);
                 }
                 else
@@ -63,7 +65,7 @@ namespace JWTtokenAPI.Controllers
             var claims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier,user.Id.ToString()),
-                new Claim(ClaimTypes.Name,user.Username),   
+                new Claim(ClaimTypes.Name,user.Username),
                 new Claim(ClaimTypes.Email,user.Email)
             };
             var token = new JwtSecurityToken(_config["Jwt:Issuer"],
@@ -71,27 +73,33 @@ namespace JWTtokenAPI.Controllers
                 claims,
                 expires: DateTime.Now.AddMinutes(15),
                 signingCredentials: credentials);
-             
+
 
             return new JwtSecurityTokenHandler().WriteToken(token);
 
         }
 
+        
 
         
+
+
 
         private UserRagister Authenticate(User userLogin)
         {
 
             UserModel model = SellectByUser(userLogin);
-
-            UserRagister currentUser = new UserRagister(){Id=model.UserId,Username=model.name,Email=model.email};
-
-            if (currentUser != null)
+            if (model != null)
             {
+                UserRagister currentUser = new UserRagister() { Id = model.UserId, Username = model.name, Email = model.email };
                 return currentUser;
             }
-            return null;
+            else
+            {
+                return null;
+            }
+            
+            
         }
 
         [HttpGet]
@@ -115,8 +123,15 @@ namespace JWTtokenAPI.Controllers
                         UserModel.location = dr["location"].ToString();
                     }
                 }
-
-                return UserModel;
+                if(UserModel.UserId != 0)
+                {
+                    return UserModel;
+                }
+                else
+                {
+                    return null;
+                }
+                
 
             }
 

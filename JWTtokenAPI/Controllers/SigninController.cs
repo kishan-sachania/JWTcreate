@@ -1,4 +1,4 @@
-﻿
+﻿/*
 using JWTtokenAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -112,4 +112,4 @@ namespace JWTLoginAuthenticationAuthorization.Controllers
         }
 
     }
-}
+}*/
