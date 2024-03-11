@@ -1,4 +1,4 @@
-﻿/*
+﻿
 using JWTtokenAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +26,7 @@ namespace JWTLoginAuthenticationAuthorization.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        public ActionResult Login([FromBody] User User)
+        public ActionResult Login( User User)
         {
             var user = Authenticate(User);
             if (user != null)
@@ -45,8 +45,9 @@ namespace JWTLoginAuthenticationAuthorization.Controllers
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
             var claims = new[]
             {
-                new Claim(ClaimTypes.NameIdentifier,user.Username),
-                new Claim(ClaimTypes.Role,user.Email)
+               
+                new Claim(ClaimTypes.Name,user.Username),
+                new Claim(ClaimTypes.Email,user.Email)
             };
             var token = new JwtSecurityToken(_config["Jwt:Issuer"],
                 _config["Jwt:Audience"],
@@ -112,4 +113,4 @@ namespace JWTLoginAuthenticationAuthorization.Controllers
         }
 
     }
-}*/
+}
